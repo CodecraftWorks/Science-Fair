@@ -1,6 +1,6 @@
 function ChosenWord(w) {
     this.word = w;
-    //this.selectedIndex = -1;
+    this.selectedIndex = 0;
     this.words = [];
 
     this.addWord = function(w, d, p, s, t) {
