@@ -4,13 +4,16 @@
         <link rel="stylesheet" href="ScienceProject.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha1.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
+        <script src="oauth-1.0a.js"></script>        
     </head>
     <body>
         <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Type your sentence here." aria-describedby="basic-addon2" id="tbox">
             <div class="input-group-append">
                 <button class="btn btn-outline-secondary" type="button" id="enter">Submit</button>
-                <!-- <button class="btn btn-outline-secondary" type="button" id="view">View Result</button> -->
             </div>
         </div>
         <div id="errors"></div>
