@@ -7,13 +7,12 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha1.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/core-min.js"></script>
-        <script src="oauth-1.0a.js"></script>        
     </head>
     <body>
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="Type your sentence here." aria-describedby="basic-addon2" id="tbox">
+            <input id="tbox" type="text" class="form-control" placeholder="Type your sentence here." aria-describedby="basic-addon2">
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="enter">Submit</button>
+                <button id="enter" class="btn btn-outline-secondary" type="button">Submit</button>
             </div>
         </div>
         <div id="errors"></div>
@@ -21,8 +20,10 @@
         <div class="alert alert-danger">
             <pre id="debug"></pre>
         </div>
-        <!-- <canvas class="border pt-pictureCanvas" id="canvas"></canvas> -->
+        <div id="images"></div>
+        <canvas id="canvas" class="border pt-pictureCanvas"></canvas>
         <script src="models.js"></script>
+        <script src="_keys.js"></script>
         <script src="ScienceProject.js"></script>
     </body>
 </html>
