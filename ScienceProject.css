@@ -4,3 +4,17 @@
     margin: auto; 
     display: block;
 }
+#images {
+    width: 800px;
+    height: 600px;
+    margin: 0px auto;
+    position: relative;
+}
+#images .wordGroup {
+    width: 84px;
+    height: 84px;
+    position: absolute;
+}
+#images .image {
+    position: absolute;
+}

@@ -30,10 +30,10 @@ function WordDetail(w, d, p, s, t) {
         return !this.isVerb() && !this.isAdjective() && this.partOfSpeech === "noun";
     };
     this.isVerb = function() {
-        return this.partOfSpeech === "verb" || VERBS[this.word] !== undefined;
+        return VERBS[this.word] !== undefined;
     };
     this.isAdjective = function() {
-        return this.partOfSpeech === "adjective" || ADJECTIVES[this.word] !== undefined;
+        return ADJECTIVES[this.word] !== undefined;
     };
     this.isSkipWord = function() {
         return this.partOfSpeech === "skip" || WORDS_TO_SKIP.indexOf(this.word) > -1;
@@ -41,7 +41,7 @@ function WordDetail(w, d, p, s, t) {
 
     this.applyVerb = function(v) {
         if (this.isNoun()) {
-            this.verbs.push(a);
+            this.verbs.push(v);
         }
         else {
             log("Attempt to apply verb '"+a.word+"' to the "+this.partOfSpeech+" '"+this.word+"'. Must be a noun.");
@@ -59,16 +59,16 @@ function WordDetail(w, d, p, s, t) {
 }
 
 function ImageDetail(u, w, h) {
-    this.img = new Image(w, h);
-    this.img.src = u;
     this.url = u;
-    this.x;
-    this.y;
+    this.id = null;
+    this.x = 0;
+    this.y = 0;
     this.width = w;
     this.height = h;
     this.color = null;
 
-    this.setDrawnPosition = function(x, y) {
+    this.setDrawnPosition = function(id, x, y) {
+        this.id = id;
         this.x = x;
         this.y = y;
     }

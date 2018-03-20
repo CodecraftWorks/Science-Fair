@@ -1,11 +1,3 @@
-/*
-
-TODO List:
- - Bug in writing the last banjo for a line when the canvas height does not include another row yet.
-
-
-*/
-
 var chosenWords = [];
 var SPACING_X = 16;
 var SPACING_Y = 16;
@@ -13,8 +5,6 @@ var IMAGE_WIDTH = 84;
 var IMAGE_HEIGHT = 84;
 // var IMAGE_COUNT_X = 10;
 // var IMAGE_COUNT_Y = 7;
-
-$("#images").hide();
 
 $(function() {
     resetInterface();
@@ -26,9 +16,6 @@ $(function() {
     });
 });
 
-function getCanvas() {
-    return $("#canvas")[0];
-}
 function getContext() {
     return getCanvas().getContext("2d");  
 }
@@ -51,7 +38,7 @@ function main() {
                 
     }
     catch(e) {
-        error("ERROR: "+e);
+        showError("ERROR: "+e);
         log("ERROR: "+e);
     }
 }
@@ -75,74 +62,106 @@ function processAndDrawWords() {
     the cat is blue
     */
 
-    var currentNoun = null;
-    var currentVerb = null;
-    var currentAdjectives = [];
-
-    chosenWords.forEach(w => {
-        var wordDetail = w.wordDetails[w.selectedIndex];
+    log("== FOR LOOP ==")
+    for (i = 0; i < chosenWords.length; i++) {
+        var wordDetail = chosenWords[i].wordDetails[chosenWords[i].selectedIndex];
         if (wordDetail.isNoun()) {
-            if (currentAdjectives) {
-                currentAdjectives.forEach(a => {
-                    wordDetail.applyAdjective(a);
-                });
-                currentNoun = null;
-            }
-            else {
-                currentNoun = wordDetail;
-            }
-            if (currentVerb) {
-                wordDetail.applyVerb(currentVerb);
-                currentNoun = null;
-            }
+            log("== FOR LOOP NOUN FOUND ==")
         }
         else if (wordDetail.isVerb()) {
-            if (currentNoun) {
-                currentNoun.applyVerb(wordDetail);
-                currentNoun = null;
+            log("== FOR LOOP VERB FOUND ==")
+            if (i >= 2) {
+                log("2");
+                if (chosenWords[i - 1].wordDetails[chosenWords[i - 1].selectedIndex].isSkipWord()) {
+                    if (chosenWords[i - 2].wordDetails[chosenWords[i - 2].selectedIndex].isNoun()) {
+                        chosenWords[i - 2].wordDetails[chosenWords[i - 2].selectedIndex].applyVerb(wordDetail);
+                        log("Went two back for verb '"+wordDetail.word+".'");
+                        continue;
+                    }
+                }
             }
-            else {
-                currentVerb = wordDetail;
+            if (i >= 1) {
+                log("1");
+                if (chosenWords[i - 1].wordDetails[chosenWords[i - 1].selectedIndex].isNoun()) {
+                    chosenWords[i - 1].wordDetails[chosenWords[i - 1].selectedIndex].applyVerb(wordDetail);
+                    log("Went one back for verb '"+wordDetail.word+".'");
+                    continue;
+                }
+            }
+            if (i < chosenWords.length - 1) {
+                if (chosenWords[i + 1].wordDetails[chosenWords[i + 1].selectedIndex].isNoun()) {
+                    chosenWords[i + 1].wordDetails[chosenWords[i + 1].selectedIndex].applyVerb(wordDetail);
+                    log("Went one back for verb '"+wordDetail.word+".'");
+                    continue;
+                }
             }
         }
         else if (wordDetail.isAdjective()) {
-            if (currentNoun) {
-                currentNoun.applyAdjective(wordDetail);
+            log("== FOR LOOP ADJECTIVE FOUND ==")
+            if (i >= 2) {
+                if (chosenWords[i - 1].wordDetails[chosenWords[i - 1].selectedIndex].isSkipWord()) {
+                    if (chosenWords[i - 2].wordDetails[chosenWords[i - 2].selectedIndex].isNoun()) {
+                        chosenWords[i - 2].wordDetails[chosenWords[i - 2].selectedIndex].applyAdjective(wordDetail);
+                        log("Went two back for adjective '"+wordDetail.word+".'");
+                        continue;
+                    }
+                }
             }
-            else {
-                currentAdjectives.push(wordDetail);
+            if (i < chosenWords.length - 1) {
+                if (chosenWords[i + 1].wordDetails[chosenWords[i + 1].selectedIndex].isNoun()) {
+                    chosenWords[i + 1].wordDetails[chosenWords[i + 1].selectedIndex].applyAdjective(wordDetail);
+                    log("Went one forward for adjective '"+wordDetail.word+".'");
+                    continue;
+                }
+            }
+            if (i < chosenWords.length - 1) {
+                if (chosenWords[i + 1].wordDetails[chosenWords[i + 1].selectedIndex].isAdjective()) {
+                    for (a = 2; a <= 5;) {
+                        if (chosenWords[i + a].wordDetails[chosenWords[i + a].selectedIndex].isAdjective()) {
+                            a++
+                        }
+                        else if (chosenWords[i + a].wordDetails[chosenWords[i + a].selectedIndex].isVerb() &&
+                        chosenWords[i + a + 1].wordDetails[chosenWords[i + a + 1].selectedIndex].isNoun()) {
+                            chosenWords[i + a + 1].wordDetails[chosenWords[i + a + 1].selectedIndex].applyAdjective(wordDetail);
+                            log("Found a verb and went "+(a+1)+" forward for adjective '"+wordDetail.word+".'")
+                            break;
+                        }
+                        else if (chosenWords[i + a].wordDetails[chosenWords[i + a].selectedIndex].isNoun()) {
+                            chosenWords[i + a].wordDetails[chosenWords[i + a].selectedIndex].applyAdjective(wordDetail);
+                            log("Went "+a+" forward for adjective '"+wordDetail.word+".'")
+                            break;
+                        }
+                    }
+                }
             }
         }
-        else if (wordDetail.isSkipWord()) {
-            // Nothing to do?
-            log("Skipping "+wordDetail.partOfSpeech+" '"+wordDetail.word+"'.")
-        }
-    }); // forEach
+        else if (wordDetail.partOfSpeech == "skip") {
 
+        }
+    } // for
     redrawCanvas();
 }
 
 function redrawCanvas() {
+    log("Redrawing canvas.");
     var xpos = 0;
     var ypos = 0;
-    var canvas = getCanvas();
-    var ctx = getContext();  
-    
-    var count = 0;
 
     chosenWords.forEach(w => {
-        count++;
         var wordDetail = w.wordDetails[w.selectedIndex];
 
         if (wordDetail.isNoun()) {
             var imageDetail = wordDetail.imageDetail;
             if (imageDetail != null) {
-                log("Drawing image "+count+" at pos: "+xpos+", "+ypos+". "+imageDetail.url);
-                imageDetail.setDrawnPosition(xpos, ypos);
-                imageDetail.img.onload = preloadImageFunction(imageDetail, xpos, ypos);
+
+                var divId = "word_"+Math.random().toString(36).slice(2);
+                imageDetail.setDrawnPosition(divId, xpos, ypos);
+                log("Drawing image (id: "+divId+") at pos: "+imageDetail.x+", "+imageDetail.y+". "+imageDetail.url);
+
+                $("#images").append("<div id='"+divId+"' class='wordGroup' style='left: "+imageDetail.x+"; top: "+imageDetail.y+";'><div class='adjectives'><img src='"+imageDetail.url+"' class='image'/></div></div>");
 
                 xpos += IMAGE_WIDTH + SPACING_X;
-                if (xpos > canvas.width - IMAGE_WIDTH - SPACING_X) {
+                if (xpos > $("#images").width() - IMAGE_WIDTH - SPACING_X) {
                     ypos += IMAGE_HEIGHT + SPACING_Y;
                     xpos = 0;
                 }
@@ -166,20 +185,18 @@ function redrawCanvas() {
     }); // forEach
 }
 
-function colorizeImage(imageDetail, hexColor) {
-    var ctx = getContext();
-    ctx.fillStyle = hexColor;
-    ctx.globalAlpha = 0.3;
-    log("Drawing overlay at: "+imageDetail.x+"/"+imageDetail.y+" with size "+imageDetail.width+" x "+imageDetail.height+".");
-    ctx.fillRect(imageDetail.x, imageDetail.y, imageDetail.width, imageDetail.height);
-    ctx.globalAlpha = 1.0;
+function colorizeImage(imageDetail, color) {
+    $("#"+imageDetail.id+" .adjectives").css({
+        "background-color": "rgba("+color+", 0.3)",
+        "width": imageDetail.width+"px",
+        "height": imageDetail.height+"px",
+    });
 }
 
 function fillDetailsForVerb(wordDetail) {    
     return $.Deferred()
         .done(function() {
             if (VERBS[wordDetail.word]) {
-                log("Verb implementation found.");
                 // TODO
             }
         })
@@ -189,9 +206,7 @@ function fillDetailsForVerb(wordDetail) {
 function fillDetailsForAdjective(wordDetail) {  
     return $.Deferred()
         .done(function() {
-
             if (ADJECTIVES[wordDetail.word]) {
-                log("Adjective implementation found.");
                 // TODO
             }
         })
@@ -249,15 +264,6 @@ function fillDetailsForNoun(wordDetail) {
     return call;
 }
 
-function preloadImageFunction(imageDetail, xpos, ypos) {
-    return function() {
-        getContext().drawImage(imageDetail.img, xpos, ypos);
-        if (imageDetail.color) {
-            colorizeImage(imageDetail, imageDetail.color);
-        }
-    };
-}
-
 function determineWordTypes(w) {
     var cWord = new ChosenWord(w);
     chosenWords.push(cWord);
@@ -279,7 +285,7 @@ function determineWordTypes(w) {
                 cWord.addWord(w, null, "skip", null, null);
             }
         }).fail(function(xhr, textStatus, error) {
-            showError("Something went wrong: '"+textStatus+",' Error: "+error);
+            showError("WordsAPI does not understand word '"+w+"'");
         });
     return call;
 }
@@ -287,14 +293,16 @@ function determineWordTypes(w) {
 function resetInterface() {
     chosenWords = [];
     $("#debug").html(null).hide();
-    $("#options").html(null)
-    $("#images").html(null);
+    $("#options").html(null).hide();
     $("#errors").removeClass().html(null).hide();
-    var canvas = getCanvas();
-    var ctx = getContext();
-    canvas.width = 800; 
-    canvas.height = 600;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    clearCanvas();
+}
+
+function clearCanvas() {
+    log("Clearing canvas.");
+    $("#images").html(null);
+    $("#images").width(800); 
+    $("#images").height(600);
 }
 
 function showError(message) {
