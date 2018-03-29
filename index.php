@@ -23,7 +23,10 @@
         <script src="adjectives.js"></script>
         <script src="verbs.js"></script>
         <script src="models.js"></script>
-        <script src="_keys.js"></script>
+        <script type="text/javascript">
+            var MASHAPE_API_KEY = "<?php echo getenv("MASHAPE_API_KEY"); ?>";
+            var MASHAPE_API_HOST = "<?php echo getenv("MASHAPE_API_HOST"); ?>";
+        </script>
         <script src="ScienceProject.js" crossorigin="anonymous"></script>
     </body>
 </html>

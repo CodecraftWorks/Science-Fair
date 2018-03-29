@@ -1,5 +1,4 @@
 <?php
-require_once '_keys.php';
 require_once 'TheNounProject.class.php';
 
 header("Access-Control-Allow-Origin: *");
@@ -14,7 +13,10 @@ if (!isset($_GET["word"]))
 $word = $_GET["word"];
 $limit = isset($_GET["limit"]) ? $_GET["limit"] : 10;
 
-$theNounProject = new TheNounProject(NOUN_PROJECT_KEY, NOUN_PROJECT_SECRET);
+$NOUN_PROJECT_KEY = getenv('NOUN_PROJECT_KEY');
+$NOUN_PROJECT_SECRET = getenv('NOUN_PROJECT_SECRET');
+
+$theNounProject = new TheNounProject($NOUN_PROJECT_KEY, $NOUN_PROJECT_SECRET);
 $icons = $theNounProject->getIconsByTerm(
     $word,
     array('limit' => $limit)
