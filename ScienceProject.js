@@ -250,7 +250,7 @@ function retrieveWordDetails() {
 
 function fillDetailsForNoun(wordDetail) {    
     var call = $.ajax({
-            url: "https://picture-this-194003.appspot.com/noun-image.php?limit=1&word="+wordDetail.word,
+            url: "https://f1r3site-science-fair.herokuapp.com/noun-image.php?limit=1&word="+wordDetail.word,
             type: "GET",
             dataType : 'json',
         }).then(function(data) {
